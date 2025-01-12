@@ -1,0 +1,52 @@
+services:
+
+  kotlin:
+    image: dmtroyer/kotlin:2.1.0
+    build:
+      context: .
+      dockerfile: kotlin.Dockerfile
+    working_dir: /aoc
+    volumes:
+      - ./day-06:/aoc
+
+  python:
+    image: python:3-slim
+    entrypoint: bash
+    working_dir: /aoc
+    volumes:
+      - ./:/aoc
+
+  ruby:
+    image: dmtroyer/ruby:3.3
+    build:
+      context: .
+      dockerfile: ruby.Dockerfile
+    command: sleep infinity
+    working_dir: /aoc
+    volumes:
+      - ./:/aoc
+
+  rust:
+    image: rust:1-slim
+    working_dir: /aoc
+    volumes:
+      - ./:/aoc
+
+  scala:
+    image: dmtroyer/scala:3.3.4
+    build:
+      context: .
+      dockerfile: scala.Dockerfile
+    working_dir: /aoc
+    volumes:
+      - ./:/aoc
+
+  typescript:
+    image: dmtroyer/typescript:22
+    build:
+      context: .
+      dockerfile: typescript.Dockerfile
+    command: bash
+    working_dir: /aoc
+    volumes:
+      - ./:/aoc
