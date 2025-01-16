@@ -48,15 +48,11 @@ func compactDisk(disk []int) []int {
 
 	for i := 0; i < j; i++ {
 		if disk[i] == -1 {
-			for {
+			for ; j >= 0; j-- {
 				if disk[j] != -1 {
 					disk[i], disk[j] = disk[j], -1
-					j--
-					break
-				} else if j < 0 {
 					break
 				}
-				j--
 			}
 		}
 	}

@@ -7,7 +7,7 @@ import (
 	"unicode"
 )
 
-type diskBlock struct {
+type diskFile struct {
 	id, len int
 }
 
@@ -29,21 +29,25 @@ func buildDisk(diskMap []int) *list.List {
 		if i%2 == 0 {
 			blockId = i / 2
 		}
-		disk.PushBack(diskBlock{id: blockId, len: blockLength})
+		disk.PushBack(diskFile{id: blockId, len: blockLength})
 	}
 	return disk
 }
 
 func compactDisk(disk *list.List) *list.List {
+	// Go back to front over the disk looking for files that can fit as far to the
+	// front of the disk as possible
 	for j := disk.Back(); j != disk.Front(); j = j.Prev() {
-		if bj, ok := j.Value.(diskBlock); ok && bj.id > -1 {
+		if bj, ok := j.Value.(diskFile); ok && bj.id > -1 {
+			// Start from the front of the disk looking for an empty space large enough
+			// for the current file
 			for i := disk.Front(); i != j; i = i.Next() {
-				if bi, ok := i.Value.(diskBlock); ok && bi.id == -1 && bi.len >= bj.len {
+				if bi, ok := i.Value.(diskFile); ok && bi.id == -1 && bi.len >= bj.len {
 					rem := bi.len - bj.len
-					i.Value = diskBlock{id: bj.id, len: bj.len}
-					j.Value = diskBlock{id: -1, len: bj.len}
+					i.Value = diskFile{id: bj.id, len: bj.len}
+					j.Value = diskFile{id: -1, len: bj.len}
 					if rem > 0 {
-						disk.InsertAfter(diskBlock{id: -1, len: rem}, i)
+						disk.InsertAfter(diskFile{id: -1, len: rem}, i)
 					}
 					break
 				}
@@ -58,7 +62,7 @@ func getChecksum(disk *list.List) int {
 	i := 0
 
 	for e := disk.Front(); e != nil; e = e.Next() {
-		if b, ok := e.Value.(diskBlock); ok {
+		if b, ok := e.Value.(diskFile); ok {
 			j := i + b.len
 			for ; i < j; i++ {
 				if b.id > -1 {
@@ -77,7 +81,7 @@ func printDisk(disk *list.List) {
 	fmt.Print("Disk: ")
 
 	for i := disk.Front(); i != nil; i = i.Next() {
-		if bi, ok := i.Value.(diskBlock); ok {
+		if bi, ok := i.Value.(diskFile); ok {
 			for j := 0; j < bi.len; j++ {
 				if bi.id == -1 {
 					fmt.Print(".")
