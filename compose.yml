@@ -1,5 +1,18 @@
 services:
 
+  clojure:
+    image: clojure:temurin-21-lein
+    working_dir: /aoc
+    volumes:
+      - ./:/aoc
+
+  go:
+    image: golang:1-bookworm
+    command: ["tail", "-f", "/dev/null"]
+    working_dir: /aoc
+    volumes:
+      - ./:/aoc
+
   kotlin:
     image: dmtroyer/kotlin:2.1.0
     build:
