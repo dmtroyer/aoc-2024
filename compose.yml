@@ -7,8 +7,10 @@ services:
       - ./:/aoc
 
   go:
-    image: golang:1-bookworm
-    command: ["tail", "-f", "/dev/null"]
+    image: dmtroyer/go:1
+    build:
+      context: .
+      dockerfile: go.Dockerfile
     working_dir: /aoc
     volumes:
       - ./:/aoc
