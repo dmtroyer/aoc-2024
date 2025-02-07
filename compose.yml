@@ -36,7 +36,7 @@ services:
     build:
       context: .
       dockerfile: ruby.Dockerfile
-    command: sleep infinity
+    command: ["tail", "-f", "/dev/null"]
     working_dir: /aoc
     volumes:
       - ./:/aoc

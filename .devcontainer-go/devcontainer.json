@@ -1,0 +1,17 @@
+// .devcontainer-go/devcontainer.json
+{
+    "name": "Advent of Code (Go)",
+    "dockerComposeFile": "../compose.yml",
+    "service": "go",
+    "workspaceFolder": "/aoc",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go",
+                "ms-vscode.remote-containers"
+              ],
+        }
+    },
+    // Optionally specify other dev container settings
+    // such as extensions, forwarded ports, etc.
+  }
