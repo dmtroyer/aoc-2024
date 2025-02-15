@@ -9,7 +9,9 @@ module GardenCost
     map = build_map(file_path)
     regions = find_regions(map)
     price = regions.sum { |region| region.size * num_region_fences(region) }
-    puts "The cost is #{price}"
+    discounted_price = regions.sum { |region| region.size * num_region_sides(region) }
+    puts "The cost is #{price}."
+    puts "The discounted cost is #{discounted_price}."
   end
 
   def self.build_map(file_path)
@@ -62,6 +64,62 @@ module GardenCost
     region.sum do |plot_r, plot_c|
       neighbors = DIRECTIONS.count { |dr, dc| region_set.include?([plot_r + dr, plot_c + dc]) }
       4 - neighbors
+    end
+  end
+
+  def self.num_region_sides(region)
+    region_set = region.to_set
+    sides = 0
+
+    DIRECTIONS.each do |dr, dc|
+      boundary_plots = boundary_plots(region_set, dr, dc)
+      visited = Set[]
+
+      boundary_plots.each do |plot|
+        next if visited.include?(plot)
+
+        neighbor = [plot[0] + dr, plot[1] + dc]
+        next if region_set.include?(neighbor)
+
+        sides += 1
+        visited.merge(side_plots(plot, boundary_plots, dr, dc))
+      end
+    end
+
+    sides
+  end
+
+  def self.boundary_plots(region_set, dr, dc)
+    region_set.reject do |plot_r, plot_c|
+      neighbor = [plot_r + dr, plot_c + dc]
+      region_set.include?(neighbor)
+    end
+  end
+
+  # plots in a region sharing the same side as the given plot
+  def self.side_plots(plot, boundaries, dr, dc)
+    side_plots = Set[plot]
+    traversal_directions = side_direction_to_neighbor_directions([dr, dc])
+
+    traversal_directions.each do |tr, tc|
+      i = 1
+      loop do
+        neighbor = [plot[0] + i * tr, plot[1] + i * tc]
+        break unless boundaries.include?(neighbor)  # Stop if neighbor is not in the region
+
+        side_plots << neighbor
+        i += 1
+      end
+    end
+
+    side_plots
+  end
+
+  def self.side_direction_to_neighbor_directions(side_direction)
+    if [[-1, 0], [1, 0]].include?(side_direction)
+      [[0, -1], [0, 1]]
+    else
+      [[-1, 0], [1, 0]]
     end
   end
 end
